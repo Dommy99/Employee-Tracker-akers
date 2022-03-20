@@ -86,25 +86,25 @@ async function renderPrompts() {
     case "VIEW_EMPLOYEES":
         return viewEmployee();
     case "ADD_EMPLOYEES":
-        return addEmployees();
+        return addEmployee();
     case "DELETE_EMPLOYEES":
-        return removeEmployee();
+        return deleteEmployee();
     case "UPDATE_EMPLOYEES":
-        return updateEmployeeRole();
+        return updateEmpJobs();
     case "UPDATE_MANAGER":
-        return updateEmployeeManager();
+        return updateEmpManager();
     case "VIEW_DEPO":
-        return viewDepartments();
+        return viewDepo();
     case "ADD_DEPO":
-        return addDepartments();
+        return addDepo();
     case "DELETE_DEPO":
-        return removeDepartment();
+        return deleteDepo();
     case "VIEW_JOBS":
         return viewJobs();
     case "ADD_JOBS":
-        return addRole();
+        return addJobs();
     case "DELETE_JOBS":
-        return removeRole();
+        return deletejobs();
     default:
          return quit();
   }
@@ -120,7 +120,7 @@ async function viewEmployee(){
     initializePrompts();
 }
 
-async function viewDepartments(){
+async function viewDepo(){
     const depos = await db.grabAllDepos();
 
     console.table(depos);
@@ -137,10 +137,16 @@ async function viewJobs(){
 // Adding
 
 async function addDepo(){
+    const depos = await prompt([
+        {
+            name: "name"
+            message: "Depo name?"
+        }
+    ]);
 
 }
 
-async function addEmployees(){
+async function addEmployee(){
 
 }
 
