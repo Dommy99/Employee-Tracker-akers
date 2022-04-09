@@ -1,5 +1,6 @@
 // const connect = mysql.
 const mysql = require('mysql2');
+const {promisify} = require('util');
 
 
   require('dotenv').config()
@@ -16,8 +17,11 @@ const connect = mysql.createConnection(
     console.log('Connected to the Office Tracker database.')
 );
 // look up promisify 
+
 connect.connect(err => {
   if (err) {console.log(err)}
 });
+
+connect.query = promisify(connect.query);
 
 module.exports = connect

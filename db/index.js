@@ -1,8 +1,7 @@
 // select * from db or table
 
 const connect = require('./connect');
-const util = require('util');
-// const fs = require('fs');
+
 console.log(connect.query)
 
 
@@ -15,44 +14,44 @@ class DataBase {
     grabAllEmployees() {
         console.log('help me')
         // console.log(this.query("SELECT * FROM employees"))
-        return this.query("SELECT * FROM employees")
+        return this.connect.query("SELECT * FROM employees")
     };
 
     findAllPossibleManagers(employeeId) {
-        return this.query("SELECT id, first_name, last_name FROM employee WHERE id = ?", employeeId);
+        return this.connect.query("SELECT id, first_name, last_name FROM employee WHERE id = ?", employeeId);
     }
 
 
     createEmployee(employee) {
-        return this.query("INSERT INTO employee SET ?", employee);
+        return this.connect.query("INSERT INTO `employees` (`(first_name`, `last_name`) VALUES (?, ?)", employee);
     }
 
     updateEmpJobs(employeeId, roleId) {
-        return this.query(
-            "UPDATE employee SET role_id = ? WHERE id =?",
+        return this.connect.query(
+            "UPDATE employees SET role_id = ? WHERE id =?",
             [roleId, employeeId]
         );
     }
 
 
     grabAllJobs() {
-        return this.query(
-       'SELECT * FROM role'
+        return this.connect.query(
+       'SELECT * FROM roles'
             );
     }
 
     createRole(role) {
-        return this.query("INSERT INTO role SET ?", role);
+        return this.connect.query("INSERT INTO roles SET ?", role);
     }
 
     findAllDepartments() {
-        return this.query(
+        return this.connect.query(
         'SELECT * FROM department'
             );
     }
 
     createDepartment(department) {
-        return this.query("INSERT INTO department SET ?", department);
+        return this.connect.query("INSERT INTO department SET ?", department);
     }
 
     

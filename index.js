@@ -133,8 +133,39 @@ const employee = await prompt ([
   message: "Last name of the employee?"
 },
 
-])
+]);
+const jobOptions = jobs.map(({ id, title }) => ({
+  name: title, 
+  value: id
+}));
 
+const { roleId } = await prompt ({
+  type: "list",
+  name: "roleId",
+  message: "What is the employee's role",
+  choices: jobOptions 
+});
+
+employee.role_id = roleId;
+
+const managerChoices = employees.map(({ id, first_name, last_name }) => ({
+  name: `${first_name} ${last_name}`,
+  value: id
+}));
+managerChoices.unshift({ name: "None", value: null});
+
+const { managerId } = await prompt ({
+  type: "list",
+  name: "managerId",
+  message: "Who is the employee's manager?",
+  choices: managerChoices
+});
+
+employee.manager_id = managerId;
+
+await db.createEmployee(employee);
+
+initializePrompts();
 
 }
 
