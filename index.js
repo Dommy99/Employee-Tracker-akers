@@ -90,7 +90,7 @@ async function viewEmployee(){
 }
 
 async function viewDepo(){
-    const depos = await db.grabAllDepos();
+    const depos = await db.findAlldepo();
 
     console.table(depos);
     initializePrompts();
@@ -126,11 +126,11 @@ const employees = await db.grabAllEmployees();
 const employee = await prompt ([
 {
   name: "first_name",
-  message: "First name of the employee?"
+  message: "Whats the first name of the employee?"
 },
 {
   name: "last_name",
-  message: "Last name of the employee?"
+  message: "Whats the last name of the employee?"
 },
 
 ]);
@@ -139,26 +139,26 @@ const jobOptions = jobs.map(({ id, title }) => ({
   value: id
 }));
 
-const { roleId } = await prompt ({
+const { jobId } = await prompt ({
   type: "list",
-  name: "roleId",
-  message: "What is the employee's role",
+  name: "jobId",
+  message: "Employee's job?",
   choices: jobOptions 
 });
 
-employee.role_id = roleId;
+employee.job_id = jobId;
 
-const managerChoices = employees.map(({ id, first_name, last_name }) => ({
+const managerOp = employees.map(({ id, first_name, last_name }) => ({
   name: `${first_name} ${last_name}`,
   value: id
 }));
-managerChoices.unshift({ name: "None", value: null});
+managerOp.unshift({ name: "None", value: null});
 
 const { managerId } = await prompt ({
   type: "list",
   name: "managerId",
-  message: "Who is the employee's manager?",
-  choices: managerChoices
+  message: "Employee's manager?",
+  choices: managerOp
 });
 
 employee.manager_id = managerId;
@@ -173,7 +173,7 @@ async function addJobs(){
   console.log("DEPARTMENTS")
     const depo = await db.findAlldepo();
     console.log(depo);
-    const depoOptions = await db.depo.map(({ id, name }) => ({
+    const depoOptions = depo.map(({ id, name }) => ({
         name: name, 
         value: id
     }));
@@ -189,20 +189,20 @@ async function addJobs(){
         },
         {
             type: "list",
-            name: "depo_id",
+            name: "department_id",
             message: "Which depo are you in?",
             choices : depoOptions
         }
     ]);
 
-    await db.grabJob(job);
+    await db.makeJob(job);
 
     initializePrompts();
 }
 
 // update
 async function updateEmpJobs() {
-  const employees = await db.findAllEmployees();
+  const employees = await db.grabAllEmployees();
 
   const employeeChoices = employees.map(({id, first_name, last_name }) => ({
       name: `${first_name} ${last_name}`,
@@ -218,14 +218,14 @@ async function updateEmpJobs() {
       }
   ]);
 
-  const roles = await db.findAllRoles();
+  const roles = await db.grabAllJobs();
 
   const roleChoices = roles.map(({ id, title}) => ({
       name: title, 
       value: id
   }));
 
-  const { roleId } = await prompt ([
+  const { jobId } = await prompt ([
       {
           type: "list",
           name: "roleId",
@@ -234,9 +234,9 @@ async function updateEmpJobs() {
       }
   ]);
 
-  await db.updateEmployeeRole(employeeId, roleId);
+  await db.updateEmpJobs(employeeId, jobId);
 
-  loadMainPrompts();
+  initializePrompts();
 }
 
 

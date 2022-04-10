@@ -13,7 +13,6 @@ class DataBase {
 
     grabAllEmployees() {
         console.log('help me')
-        // console.log(this.query("SELECT * FROM employees"))
         return this.connect.query("SELECT * FROM employees")
     };
 
@@ -26,10 +25,10 @@ class DataBase {
         return this.connect.query("INSERT INTO `employees` (`(first_name`, `last_name`) VALUES (?, ?)", employee);
     }
 
-    updateEmpJobs(employeeId, roleId) {
+    updateEmpJobs(employeeId, jobId) {
         return this.connect.query(
             "UPDATE employees SET role_id = ? WHERE id =?",
-            [roleId, employeeId]
+            [jobId, employeeId]
         );
     }
 
@@ -40,11 +39,11 @@ class DataBase {
             );
     }
 
-    createRole(role) {
-        return this.connect.query("INSERT INTO roles SET ?", role);
+    makeJob(job) {
+        return this.connect.query("INSERT INTO roles SET ?", job);
     }
 
-    findAllDepartments() {
+    findAlldepo() {
         return this.connect.query(
         'SELECT * FROM department'
             );
