@@ -19,3 +19,4 @@ With API routes, GET, POST, PUT, Delete, and a database this application can use
 
 - dominiqued.akers@gmail.com
 - https://www.linkedin.com/in/dominique-akers-319a07154/
+- contributors Dominique Akers and John Damaso
