@@ -1,7 +1,7 @@
 const { prompt } = require("inquirer");
 const cTable = require("console.table");
 const logo = require("asciiart-logo");
-// const db = require("./db");
+const db = require("./db");
 
 function initializePrompts() {
   const logoPrompt = logo({
@@ -13,6 +13,7 @@ function initializePrompts() {
 }
 
 async function renderPrompts() {
+  try {
   const { choice } = await prompt([
     {
       type: "list",
@@ -20,59 +21,32 @@ async function renderPrompts() {
       name: "choice",
       choices: [
         {
-          type: "input",
           name: "View employees",
           value: "VIEW_EMPLOYEES",
         },
         {
-          type: "input",
           name: "ADD employees",
           value: "ADD_EMPLOYEES",
         },
         {
-          type: "input",
-          name: "DELETE employees",
-          value: "DELETE_EMPLOYEES",
-        },
-        {
-          type: "input",
           name: "UPDATE employees",
           value: "UPDATE_EMPLOYEES",
         },
         {
-            type: "input",
-            name: "UPDATE manager",
-            value: "UPDATE_MANAGER",
-          },
-        {
-          type: "input",
           name: "View jobs",
           value: "VIEW_JOBS",
         },
         {
-          type: "input",
           name: "Add jobs",
           value: "ADD_JOBS",
         },
         {
-          type: "input",
-          name: "Delete jobs",
-          value: "DELETE_JOBS",
-        },
-        {
-          type: "input",
           name: "View departments",
           value: "VIEW_DEPO",
         },
         {
-          type: "input",
           name: "Add departments",
           value: "ADD_DEPO",
-        },
-        {
-          type: "input",
-          name: "Delete departments",
-          value: "DELETE_DEPO",
         },
         {
           name: "Finished?",
@@ -81,38 +55,33 @@ async function renderPrompts() {
       ],
     },
   ]);
+  
 
+  console.log(choice)
   switch (choice) {
     case "VIEW_EMPLOYEES":
         return viewEmployee();
     case "ADD_EMPLOYEES":
-        return addEmployees();
-    case "DELETE_EMPLOYEES":
-        return removeEmployee();
+        return addEmployee();
     case "UPDATE_EMPLOYEES":
-        return updateEmployeeRole();
-    case "UPDATE_MANAGER":
-        return updateEmployeeManager();
+        return updateEmpJobs();
     case "VIEW_DEPO":
-        return viewDepartments();
+        return viewDepo();
     case "ADD_DEPO":
-        return addDepartments();
-    case "DELETE_DEPO":
-        return removeDepartment();
+        return addDepo();
     case "VIEW_JOBS":
         return viewJobs();
     case "ADD_JOBS":
-        return addRole();
-    case "DELETE_JOBS":
-        return removeRole();
+        return addJobs();
     default:
          return quit();
   }
-
+} catch (e) {console.e}
 }
 
 // viewing 
 async function viewEmployee(){
+  console.log("Viewing Employee")
     const employee = await db.grabAllEmployees();
 
     console.table(employee);
@@ -120,8 +89,8 @@ async function viewEmployee(){
     initializePrompts();
 }
 
-async function viewDepartments(){
-    const depos = await db.grabAllDepos();
+async function viewDepo(){
+    const depos = await db.findAlldepo();
 
     console.table(depos);
     initializePrompts();
@@ -137,16 +106,139 @@ async function viewJobs(){
 // Adding
 
 async function addDepo(){
+    const depo = await prompt([
+        {
+            name: "name",
+            message: "Depo name?"
+        }
+    ]);
+
+    await db.makeDepo(depo);
+
+    initializePrompts();
 
 }
 
-async function addEmployees(){
+async function addEmployee(){
+const jobs = await db.grabAllJobs();
+const employees = await db.grabAllEmployees();
+
+const employee = await prompt ([
+{
+  name: "first_name",
+  message: "Whats the first name of the employee?"
+},
+{
+  name: "last_name",
+  message: "Whats the last name of the employee?"
+},
+
+]);
+const jobOptions = jobs.map(({ id, title }) => ({
+  name: title, 
+  value: id
+}));
+
+const { jobId } = await prompt ({
+  type: "list",
+  name: "roleId",
+  message: "Employee's job?",
+  choices: jobOptions 
+});
+
+employee.role_id = jobId;
+
+const managerOp = employees.map(({ id, first_name, last_name }) => ({
+  name: `${first_name} ${last_name}`,
+  value: id
+}));
+managerOp.unshift({ name: "None", value: null});
+
+const { managerId } = await prompt ({
+  type: "list",
+  name: "managerId",
+  message: "Employee's manager?",
+  choices: managerOp
+});
+
+employee.manager_id = managerId;
+
+await db.createEmployee(employee);
+
+initializePrompts();
 
 }
 
-// delete
-async function deleteDepo (){
+async function addJobs(){
+  console.log("DEPARTMENTS")
+    const depo = await db.findAlldepo();
+    console.log(depo);
+    const depoOptions = depo.map(({ id, name }) => ({
+        name: name, 
+        value: id
+    }));
 
+    const job = await prompt ([
+        {
+            name: "title",
+            message: "What's your job?"
+        },
+        {
+            name: "salary",
+            message: "What's your salary?"
+        },
+        {
+            type: "list",
+            name: "department_id",
+            message: "Which depo are you in?",
+            choices : depoOptions
+        }
+    ]);
+
+    await db.makeJob(job);
+
+    initializePrompts();
 }
+
+// update
+async function updateEmpJobs() {
+  const employees = await db.grabAllEmployees();
+
+  const employeeChoices = employees.map(({id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id
+  }));
+
+  const {employeeId} = await prompt([
+      {
+          type: "list",
+          name: "employeeId",
+          message: "Which employee's role do you want to update?",
+          choices: employeeChoices
+      }
+  ]);
+
+  const roles = await db.grabAllJobs();
+
+  const roleChoices = roles.map(({ id, title}) => ({
+      name: title, 
+      value: id
+  }));
+
+  const { jobId } = await prompt ([
+      {
+          type: "list",
+          name: "roleId",
+          message: "Which role do you want to assign to the selected employee?",
+          choices: roleChoices
+      }
+  ]);
+
+  await db.updateEmpJobs(employeeId, jobId);
+
+  initializePrompts();
+}
+
+
 
 initializePrompts();

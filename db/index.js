@@ -2,19 +2,60 @@
 
 const connect = require('./connect');
 
+console.log(connect.query)
 
-class dataBase {
+
+class DataBase {
     constructor(connect) {
         this.connect = connect;
+        // this.query = util.promisify(connect.query);
     };
 
     grabAllEmployees() {
-        return this.connect.query("SELECT * FROM employee")
+        console.log('help me')
+        return this.connect.query("SELECT * FROM employees")
     };
+
+    findAllPossibleManagers(employeeId) {
+        return this.connect.query("SELECT id, first_name, last_name FROM employee WHERE id = ?", employeeId);
+    }
+
+
+    createEmployee(employee) {
+        return this.connect.query("INSERT INTO employees SET ?", employee);
+    }
+
+    updateEmpJobs(employeeId, jobId) {
+        return this.connect.query(
+            "UPDATE employees SET role_id = ? WHERE id =?",
+            [jobId, employeeId]
+        );
+    }
+
+
+    grabAllJobs() {
+        return this.connect.query(
+       'SELECT * FROM roles'
+            );
+    }
+
+    makeJob(job) {
+        return this.connect.query("INSERT INTO roles SET ?", job);
+    }
+
+    findAlldepo() {
+        return this.connect.query(
+        'SELECT * FROM department'
+            );
+    }
+
+    makeDepo(depo) {
+        return this.connect.query("INSERT INTO department SET ?", depo);
+    }
 
     
 }
 
 
 
-module.exports = dataBase(connect);
+module.exports = new DataBase(connect);
