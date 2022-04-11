@@ -141,12 +141,12 @@ const jobOptions = jobs.map(({ id, title }) => ({
 
 const { jobId } = await prompt ({
   type: "list",
-  name: "jobId",
+  name: "roleId",
   message: "Employee's job?",
   choices: jobOptions 
 });
 
-employee.job_id = jobId;
+employee.role_id = jobId;
 
 const managerOp = employees.map(({ id, first_name, last_name }) => ({
   name: `${first_name} ${last_name}`,

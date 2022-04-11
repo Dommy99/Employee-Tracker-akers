@@ -22,7 +22,7 @@ class DataBase {
 
 
     createEmployee(employee) {
-        return this.connect.query("INSERT INTO `employees` (`(first_name`, `last_name`) VALUES (?, ?)", employee);
+        return this.connect.query("INSERT INTO employees SET ?", employee);
     }
 
     updateEmpJobs(employeeId, jobId) {
@@ -49,8 +49,8 @@ class DataBase {
             );
     }
 
-    createDepartment(department) {
-        return this.connect.query("INSERT INTO department SET ?", department);
+    makeDepo(depo) {
+        return this.connect.query("INSERT INTO department SET ?", depo);
     }
 
     
